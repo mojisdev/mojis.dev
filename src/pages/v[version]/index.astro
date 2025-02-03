@@ -1,0 +1,23 @@
+---
+import PageLayout from '../../layouts/page-layout.astro';
+
+export async function getStaticPaths() {
+  const res = await fetch("https://raw.githubusercontent.com/mojisdev/emoji-data/refs/heads/main/emojis.lock");
+
+  if (!res.ok) {
+    throw new Error("failed to fetch emoji versions");
+  }
+
+  const json = await res.json()
+
+  return json.versions.map((version) => ({
+    params: { version },
+  }));
+}
+
+const { version } = Astro.params;
+---
+
+<PageLayout>
+  <h1>Version: {version}</h1>
+</PageLayout>

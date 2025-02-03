@@ -1,0 +1,41 @@
+---
+import PageLayout from '../../layouts/page-layout.astro';
+
+export async function getStaticPaths() {
+  const res = await fetch("https://raw.githubusercontent.com/mojisdev/emoji-data/refs/heads/main/emojis.lock");
+
+  if (!res.ok) {
+    throw new Error("failed to fetch emoji versions");
+  }
+
+  const json = await res.json();
+
+  const latestVersion = json.latestVersion;
+
+  const paths = [];
+
+  const categoriesRes = await fetch("https://raw.githubusercontent.com/mojisdev/emoji-data/refs/heads/main/unicode/" + latestVersion + "/categories.json");
+
+  if (!categoriesRes.ok) {
+    throw new Error("failed to fetch categories for version " + latestVersion);
+  }
+
+  const categories = await categoriesRes.json();
+
+  return [
+  {
+      props: {
+        version: latestVersion,
+        categories
+      }
+    }
+  ]
+}
+
+const { version, categories } = Astro.props;
+---
+
+<PageLayout>
+  <h1>Version: {version}</h1>
+  <h2>Categories: {JSON.stringify(categories)}</h2>
+</PageLayout>

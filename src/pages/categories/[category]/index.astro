@@ -1,0 +1,45 @@
+---
+import PageLayout from "../../../layouts/page-layout.astro";
+
+export async function getStaticPaths() {
+  // TODO: fetch latest in a different way
+  const latest = "16.0";
+  // TODO: switch to main when ready
+  const branch = "dump";
+
+  const res = await fetch(`https://raw.githubusercontent.com/mojisdev/emoji-data/refs/heads/${branch}/data/v${latest}/groups.json`);
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch emoji groups: ${res.statusText}`);
+  }
+
+  const groups = await res.json();
+
+  return groups.map((group: any) => ({
+    params: {
+      category: group.slug,
+    },
+    props: {
+      version: latest,
+      category: group,
+    },
+  }));
+}
+
+const { version, category } = Astro.props;
+
+console.log(category)
+---
+
+<PageLayout>
+  <h1>Version: {version}</h1>
+  <h2>Category Name: {category.name}</h2>
+  <h3>Subgroups</h3>
+  <ul>
+    {category.subgroups.map((subgroup: any) => (
+      <li>
+        <a href={`/categories/${category.slug}/${subgroup}`}>{subgroup}</a>
+      </li>
+    ))}
+  </ul>
+</PageLayout>

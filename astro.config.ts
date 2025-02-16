@@ -11,6 +11,17 @@ export default defineConfig({
     react(),
     sitemap()
   ],
+  env: {
+    validateSecrets: true,
+    schema: {
+      EMOJI_DATA_BRANCH: {
+        type: "string",
+        access: "public",
+        context: "server",
+        default: "main"
+      }
+    }
+  },
   vite: {
     plugins: [
       tailwindcss()

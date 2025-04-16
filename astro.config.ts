@@ -17,10 +17,16 @@ export default defineConfig({
   env: {
     validateSecrets: true,
     schema: {
+      API_URL: {
+        type: "string",
+        access: "public",
+        context: "client",
+        default: "https://api.mojis.dev"
+      },
       EMOJI_DATA_BRANCH: {
         type: "string",
         access: "public",
-        context: "server",
+        context: "client",
         default: "main"
       }
     }
@@ -28,6 +34,6 @@ export default defineConfig({
   vite: {
     plugins: [
       tailwindcss()
-    ]
+    ],
   },
 });

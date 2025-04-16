@@ -1,7 +1,7 @@
 {
   "name": "mojis.dev",
   "type": "module",
-  "version": "0.0.1",
+  "private": true,
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -9,19 +9,19 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/sitemap": "^3.2.1",
+    "@astrojs/sitemap": "^3.3.0",
     "@iconify-json/ph": "^1.2.2",
     "astro-icon": "^1.1.5",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
   },
-  "packageManager": "pnpm@10.2.1",
+  "packageManager": "pnpm@10.8.1",
   "devDependencies": {
-    "@astrojs/react": "^4.2.1",
-    "@tailwindcss/vite": "^4.0.5",
-    "@types/react": "^19.0.8",
-    "@types/react-dom": "^19.0.3",
-    "astro": "^5.4.1",
-    "tailwindcss": "^4.0.5"
+    "@astrojs/react": "^4.2.4",
+    "@tailwindcss/vite": "^4.1.4",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "astro": "^5.7.1",
+    "tailwindcss": "^4.1.4"
   }
 }

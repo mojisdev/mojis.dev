@@ -38,7 +38,10 @@ const navigation = [
 ];
 ---
 
-<aside id="sidebar" class="bg-sidebar text-sidebar-foreground flex h-full flex-col transition-all duration-300 ease-in-out w-64">
+<!-- Sidebar backdrop overlay (mobile only) -->
+<div id="sidebar-backdrop" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden transition-opacity duration-300 opacity-0"></div>
+
+<aside id="sidebar" class="bg-sidebar text-sidebar-foreground flex h-full flex-col transition-all duration-300 ease-in-out w-64 fixed md:relative z-50 shadow-lg md:shadow-none left-0 top-0 transform md:translate-x-0">
   <div class="p-2 pb-2">
     <div class="flex items-center gap-2 py-3">
       <div class="size-8 bg-sidebar-primary rounded-md flex items-center justify-center text-sidebar-primary-foreground shrink-0">
@@ -48,6 +51,10 @@ const navigation = [
         <h2 class="font-semibold text-sidebar-foreground">Mojis</h2>
         <p class="text-xs text-sidebar-foreground/60">{shortSha}</p>
       </div>
+      <!-- Close button (mobile only) -->
+      <button id="close-sidebar" class="ml-auto p-1 rounded-md hover:bg-sidebar-accent/20 text-sidebar-foreground/60 hover:text-sidebar-foreground md:hidden">
+        <Icon name="lucide:x" class="w-5 h-5" />
+      </button>
     </div>
 
     <div class="mt-4 relative transition-opacity duration-300 ease-in-out" id="sidebar-search">
@@ -62,6 +69,7 @@ const navigation = [
     </div>
   </div>
 
+  <!-- Rest of the sidebar -->
   <nav class="flex-1 p-4 pt-0 space-y-1 overflow-y-auto scrollbar-thin scrollbar-thumb-sidebar-border scrollbar-track-transparent">
     {
       navigation.map((item) => (
@@ -97,19 +105,35 @@ const navigation = [
 </aside>
 
 <style>
-  #sidebar.collapsed {
-    width: 4rem; /* 64px = 16rem */
+  /* Base styles */
+  #sidebar {
+    will-change: transform, width;
+  }
+  
+  /* Mobile styles - starts offscreen */
+  @media (max-width: 767px) {
+    #sidebar {
+      transform: translateX(-100%);
+    }
+  }
+  
+  /* Desktop collapsed state */
+  @media (min-width: 768px) {
+    #sidebar.collapsed {
+      width: 4rem;
+    }
+
+    #sidebar.collapsed #sidebar-title,
+    #sidebar.collapsed #sidebar-search,
+    #sidebar.collapsed .sidebar-text,
+    #sidebar.collapsed .sidebar-toggle,
+    #sidebar.collapsed .sidebar-submenu {
+      opacity: 0;
+      visibility: hidden;
+    }
   }
 
-  #sidebar.collapsed #sidebar-title,
-  #sidebar.collapsed #sidebar-search,
-  #sidebar.collapsed .sidebar-text,
-  #sidebar.collapsed .sidebar-toggle,
-  #sidebar.collapsed .sidebar-submenu {
-    opacity: 0;
-    visibility: hidden;
-  }
-
+  /* Visible sidebar elements */
   #sidebar #sidebar-title,
   #sidebar #sidebar-search,
   #sidebar .sidebar-text,
@@ -118,12 +142,62 @@ const navigation = [
     opacity: 1;
     visibility: visible;
   }
+  
+  /* Mobile open state */
+  #sidebar.open {
+    transform: translateX(0);
+  }
+  
+  /* Active backdrop */
+  #sidebar-backdrop.active {
+    display: block;
+    opacity: 1;
+  }
 </style>
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
+    // Get all relevant elements
+    const sidebar = document.getElementById("sidebar");
+    const backdrop = document.getElementById("sidebar-backdrop");
+    const toggleButton = document.getElementById("toggle-sidebar");
+    const closeButton = document.getElementById("close-sidebar");
+    
     // Get all expandable section headers
     const expandableHeaders = document.querySelectorAll('[data-expandable="true"]');
+
+    // Function to open sidebar on mobile
+    function openMobileSidebar() {
+      sidebar?.classList.add("open");
+      backdrop?.classList.add("active");
+      document.body.style.overflow = "hidden"; // Prevent scrolling when sidebar is open
+    }
+
+    // Function to close sidebar on mobile
+    function closeMobileSidebar() {
+      sidebar?.classList.remove("open");
+      backdrop?.classList.remove("active");
+      document.body.style.overflow = ""; // Restore scrolling
+    }
+
+    // Handle sidebar toggle (adapts based on screen size)
+    toggleButton?.addEventListener("click", () => {
+      if (window.innerWidth >= 768) {
+        // Desktop behavior - just toggle collapsed state
+        sidebar?.classList.toggle("collapsed");
+        const isCollapsed = sidebar?.classList.contains("collapsed");
+        localStorage.setItem("sidebarCollapsed", isCollapsed ? "true" : "false");
+      } else {
+        // Mobile behavior - open the sidebar like a sheet
+        openMobileSidebar();
+      }
+    });
+
+    // Close sidebar when backdrop is clicked
+    backdrop?.addEventListener("click", closeMobileSidebar);
+    
+    // Close sidebar when close button is clicked
+    closeButton?.addEventListener("click", closeMobileSidebar);
 
     // Add click handlers for expanding/collapsing sections
     expandableHeaders.forEach((header) => {
@@ -176,19 +250,42 @@ const navigation = [
       });
     });
 
-    // Handle sidebar state persistence
-    const sidebar = document.getElementById("sidebar");
+    // Handle sidebar state persistence (desktop only)
     const sidebarState = localStorage.getItem("sidebarCollapsed");
 
-    // Set initial state based on saved preference
-    if (sidebarState === "true") {
+    // Set initial state based on saved preference (desktop only)
+    if (window.innerWidth >= 768 && sidebarState === "true") {
       sidebar?.classList.add("collapsed");
     }
 
-    // Listen for toggle events from app-shell
-    document.getElementById("toggle-sidebar")?.addEventListener("click", () => {
-      const isCollapsed = sidebar?.classList.contains("collapsed");
-      localStorage.setItem("sidebarCollapsed", isCollapsed ? "false" : "true");
+    // Close sidebar when navigating to a new page on mobile
+    const sidebarLinks = sidebar?.querySelectorAll("a");
+    sidebarLinks?.forEach(link => {
+      link.addEventListener("click", () => {
+        if (window.innerWidth < 768) {
+          closeMobileSidebar();
+        }
+      });
+    });
+
+    // Handle resize events
+    window.addEventListener("resize", () => {
+      if (window.innerWidth >= 768) {
+        // Reset mobile specific styles when returning to desktop
+        sidebar?.classList.remove("open");
+        backdrop?.classList.remove("active");
+        document.body.style.overflow = "";
+        
+        // Apply desktop collapsed state if needed
+        if (sidebarState === "true") {
+          sidebar?.classList.add("collapsed");
+        } else {
+          sidebar?.classList.remove("collapsed");
+        }
+      } else {
+        // Reset desktop specific styles when going to mobile
+        sidebar?.classList.remove("collapsed");
+      }
     });
   });
 </script>

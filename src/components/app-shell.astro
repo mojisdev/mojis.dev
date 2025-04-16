@@ -1,0 +1,32 @@
+---
+import AppSidebar from "./app-sidebar.astro";
+import { Icon } from "astro-icon/components";
+---
+
+<div class="flex h-screen">
+  <AppSidebar />
+
+  <div class="flex flex-col flex-1 overflow-hidden">
+    <header class="border-b border-gray-200 dark:border-gray-800 h-16 flex items-center px-6">
+      <button id="toggle-sidebar" class="mr-4 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800" aria-label="Toggle sidebar">
+        <Icon name="lucide:panel-left" class="w-5 h-5" />
+      </button>
+      <div class="flex-1">
+        <h1 class="text-lg font-medium">Mojis</h1>
+      </div>
+    </header>
+
+    <main class="flex-1 overflow-auto p-6">
+      <slot />
+    </main>
+  </div>
+</div>
+
+<script is:inline>
+  const toggleButton = document.getElementById("toggle-sidebar");
+  const sidebar = document.getElementById("sidebar");
+
+  toggleButton?.addEventListener("click", () => {
+    sidebar?.classList.toggle("collapsed");
+  });
+</script>

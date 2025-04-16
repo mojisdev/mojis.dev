@@ -3,7 +3,7 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from "@tailwindcss/vite";
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
-
+import buildMeta from "unplugin-build-meta/astro";
 import icon from "astro-icon";
 
 // https://astro.build/config
@@ -13,6 +13,7 @@ export default defineConfig({
     react(),
     sitemap(),
     icon(),
+    buildMeta({}),
   ],
   env: {
     validateSecrets: true,

@@ -6,13 +6,16 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "generate:client": "openapi-typescript -o ./src/api-definitions.d.ts https://api.mojis.dev/openapi.json",
+    "generate:client:local": "openapi-typescript -o ./src/api-definitions.d.ts http://localhost:8787/openapi.json"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.3.0",
     "@iconify-json/lucide": "^1.2.37",
     "@iconify-json/ph": "^1.2.2",
     "astro-icon": "^1.1.5",
+    "openapi-fetch": "^0.13.5",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
@@ -23,8 +26,10 @@
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "astro": "^5.7.1",
+    "openapi-typescript": "^7.6.1",
     "tailwindcss": "^4.1.4",
     "tw-animate-css": "^1.2.5",
+    "typescript": "^5.8.3",
     "unplugin-build-meta": "^0.2.0"
   }
 }

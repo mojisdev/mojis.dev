@@ -1,0 +1,64 @@
+---
+import PageLayout from "../../../layouts/page-layout.astro";
+import { client } from "../../../lib/client";
+
+export async function getStaticPaths() {
+  const { data: versions, error } = await client.GET("/api/v1/versions");
+
+  if (error != null) {
+    throw new Error(`failed to fetch versions: ${error}`);
+  }
+
+
+  const paths = [];
+
+	const categoryPromises = versions.map(async (version) => {
+		const { data, error } = await client.GET("/api/v1/categories/{version}", {
+			params: {
+				path: {
+					version: version.emoji_version!,
+				},
+			},
+		});
+
+		if (error != null) {
+			throw new Error(`failed to fetch emoji groups: ${error}`);
+		}
+
+		return [version.emoji_version, data] as const;
+	})
+
+	const categories = await Promise.all(categoryPromises);
+
+	for (const [version, groups] of categories) {
+		paths.push({
+			params: {
+				version,
+			},
+			props: {
+				version,
+				categories: groups,
+			},
+		});
+	}
+
+	return paths;
+}
+
+const { version, categories } = Astro.props;
+---
+
+<PageLayout>
+  <h1>Version: {version}</h1>
+
+  <h2>Categories</h2>
+  <ul>
+    {
+      categories.map((group) => (
+        <li>
+          <a href={`/${version}/categories/${group.slug}`}>{group.name}</a>
+        </li>
+      ))
+    }
+  </ul>
+</PageLayout>

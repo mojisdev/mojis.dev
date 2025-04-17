@@ -1,0 +1,33 @@
+---
+import PageLayout from '../../layouts/page-layout.astro';
+import { client } from '../../lib/client';
+
+export async function getStaticPaths() {
+  const { data: versions, error } = await client.GET("/api/v1/versions");
+  if (error != null) {
+    throw new Error(`failed to fetch versions: ${error}`);
+  }
+
+  return versions.map((version) => ({
+    params: {
+      version: version.emoji_version,
+    },
+    props: {
+      version: version.emoji_version,
+    },
+  }));
+}
+
+const { version } = Astro.props;
+
+---
+
+<PageLayout>
+<div class="flex justify-center items-center min-h-screen">
+	<div class="p-8 rounded-lg border border-gray-300 shadow text-center">
+		<h1 class="text-3xl font-bold text-gray-800">Coming Soon</h1>
+		<p class="mt-2 text-gray-600">We're working on something awesome!</p>
+    <p class="mt-2 text-gray-600">Version: {version}</p>
+	</div>
+</div>
+</PageLayout>

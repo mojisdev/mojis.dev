@@ -44,10 +44,10 @@ import SidebarItem from "./sidebar-item.astro";
   <!-- Main navigation sections -->
   <nav class="flex-1 p-4 pt-0 overflow-y-auto scrollbar-thin scrollbar-thumb-sidebar-border scrollbar-track-transparent flex flex-col">
     <!-- Main sections container -->
-    <div class="flex-1 space-y-6 sidebar-sections">
+    <div class="flex-1 space-y-6 group-[.collapsed]:md:space-y-0">
       {
         mainSections.map((section) => (
-          <div class="sidebar-section">
+          <div class="group-[.collapsed]:md:m-0 group-[.collapsed]:md:p-0">
             <h3 class="text-xs uppercase font-medium text-sidebar-foreground/50 px-2 mb-2 transition-opacity duration-300 ease-in-out group-[.collapsed]:md:hidden">{section.title}</h3>
             <div class="space-y-1">
               {section.items.map((item) => (
@@ -101,16 +101,6 @@ import SidebarItem from "./sidebar-item.astro";
   @media (min-width: 768px) {
     #sidebar.collapsed {
       width: 4rem;
-    }
-
-    /* Remove section spacing */
-    #sidebar.collapsed .sidebar-sections {
-      @apply space-y-0;
-    }
-
-    /* Remove item spacing */
-    #sidebar.collapsed .sidebar-section {
-      @apply m-0 p-0;
     }
 
     #sidebar.collapsed a {

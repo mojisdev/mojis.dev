@@ -23,12 +23,6 @@ export default defineConfig({
         access: "public",
         context: "client",
         default: "https://api.mojis.dev"
-      },
-      EMOJI_DATA_BRANCH: {
-        type: "string",
-        access: "public",
-        context: "client",
-        default: "main"
       }
     }
   },

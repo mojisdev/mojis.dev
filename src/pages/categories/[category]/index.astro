@@ -1,19 +1,23 @@
 ---
 import PageLayout from "../../../layouts/page-layout.astro";
-import { API_URL  } from "astro:env/client"
+import { client } from "../../../lib/client";
 
 export async function getStaticPaths() {
   // TODO: fetch latest in a different way
   const latest = "16.0";
+  const { data: groups, error } = await client.GET("/api/v1/categories/{version}", {
+    params: {
+      path: {
+        version: latest,
+      },
+    },
+  });
 
-  const res = await fetch(API_URL + "/api/v1/categories/" + latest)
-  if (!res.ok) {
-    throw new Error(`Failed to fetch emoji groups: ${res.statusText}`);
+  if (error != null) {
+    throw new Error(`failed to fetch emoji groups: ${error}`);
   }
 
-  const groups = await res.json();
-
-  return groups.map((group: any) => ({
+  return groups.map((group) => ({
     params: {
       category: group.slug,
     },
@@ -25,8 +29,6 @@ export async function getStaticPaths() {
 }
 
 const { version, category } = Astro.props;
-
-console.log(category)
 ---
 
 <PageLayout>
@@ -34,10 +36,12 @@ console.log(category)
   <h2>Category Name: {category.name}</h2>
   <h3>Subgroups</h3>
   <ul>
-    {category.subgroups.map((subgroup: any) => (
-      <li>
-        <a href={`/categories/${category.slug}/${subgroup}`}>{subgroup}</a>
-      </li>
-    ))}
+    {
+      category.subgroups.map((subgroup: any) => (
+        <li>
+          <a href={`/categories/${category.slug}/${subgroup}`}>{subgroup}</a>
+        </li>
+      ))
+    }
   </ul>
 </PageLayout>

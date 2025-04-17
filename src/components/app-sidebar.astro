@@ -2,6 +2,7 @@
 import { Icon } from "astro-icon/components";
 import { repositoryUrl, sha, shortSha } from "virtual:build-meta/git";
 import { mainSections, resourcesSection } from "../data/navigation";
+import SidebarItem from "./sidebar-item.astro";
 ---
 
 <div id="sidebar-backdrop" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden transition-opacity duration-300 opacity-0"></div>
@@ -50,35 +51,7 @@ import { mainSections, resourcesSection } from "../data/navigation";
             <h3 class="text-xs uppercase font-medium text-sidebar-foreground/50 px-2 mb-2 transition-opacity duration-300 ease-in-out sidebar-section-title">{section.title}</h3>
             <div class="space-y-1">
               {section.items.map((item) => (
-                <div class="sidebar-item">
-                  <div
-                    class={`flex items-center justify-between rounded-md hover:bg-sidebar-accent/20 transition-colors duration-200 ${item.expandable ? "cursor-pointer" : ""}`}
-                    data-expandable={item.expandable}
-                  >
-                    <a href={item.href} class="flex-1 text-sidebar-foreground/80 hover:text-sidebar-foreground py-2 px-2 truncate transition-colors duration-200 flex items-center">
-                      {item.icon ? <Icon name={item.icon} class="w-5 h-5 mr-3 inline-block flex-shrink-0 sidebar-icon" /> : <div class="w-5 h-5 mr-3 flex-shrink-0" />}
-                      <span class="sidebar-text">{item.name}</span>
-                    </a>
-                    {item.expandable && (
-                      <button class="w-6 h-6 items-center justify-center text-sidebar-foreground/60 hover:text-sidebar-foreground transition-colors duration-200 sidebar-toggle">
-                        <span class="transform transition-transform duration-200 rotate-0">+</span>
-                      </button>
-                    )}
-                  </div>
-
-                  {item.items && (
-                    <div class={`ml-3 pl-3 border-l border-sidebar-border mt-1 space-y-1 transition-all duration-200 ${!item.expanded && "hidden"} sidebar-submenu`}>
-                      {item.items.map((subItem) => (
-                        <a
-                          href={subItem.href}
-                          class="block py-2 px-2 text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/20 rounded-md transition-colors duration-200 truncate"
-                        >
-                          <span class="sidebar-text">{subItem.name}</span>
-                        </a>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <SidebarItem item={item} />
               ))}
             </div>
           </div>
@@ -86,20 +59,12 @@ import { mainSections, resourcesSection } from "../data/navigation";
       }
     </div>
 
-    <!-- Resources section at bottom -->
     <div class="mt-auto pt-6 border-t border-sidebar-border/30 sidebar-resources">
       <h3 class="text-xs uppercase font-medium text-sidebar-foreground/50 px-2 mb-2 transition-opacity duration-300 ease-in-out sidebar-section-title">{resourcesSection.title}</h3>
       <div class="space-y-1">
         {
           resourcesSection.items.map((item) => (
-            <div class="sidebar-item">
-              <div class="flex items-center justify-between rounded-md hover:bg-sidebar-accent/20 transition-colors duration-200">
-                <a href={item.href} class="flex-1 text-sidebar-foreground/80 hover:text-sidebar-foreground py-2 px-2 truncate transition-colors duration-200 flex items-center">
-                  {item.icon && <Icon name={item.icon} class="w-5 h-5 mr-3 inline-block flex-shrink-0 sidebar-icon" />}
-                  <span class="sidebar-text">{item.name}</span>
-                </a>
-              </div>
-            </div>
+            <SidebarItem item={item} />
           ))
         }
       </div>
@@ -146,11 +111,6 @@ import { mainSections, resourcesSection } from "../data/navigation";
     #sidebar.collapsed .sidebar-submenu,
     #sidebar.collapsed .sidebar-section-title {
       @apply opacity-0 invisible absolute;
-    }
-
-    /* Hide items without icons */
-    #sidebar.collapsed .no-icon {
-      @apply hidden;
     }
 
     /* Remove section spacing */

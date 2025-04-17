@@ -1,24 +1,16 @@
 import { API_URL } from "astro:env/client";
 import { repositoryUrl } from "virtual:build-meta/git";
 
-export interface NavigationItem {
-  name: string;
-  icon?: string;
-  href?: string;
-  expandable?: boolean;
-  items?: NavigationItem[];
-  expanded?: boolean;
-}
 
-export interface BaseNavigationItem {
+export interface NavigationItem {
   name: string;
   href: string;
 }
 
-export interface NavigationItemWithIcon extends BaseNavigationItem {
+export interface NavigationItemWithIcon extends NavigationItem {
   expandable?: boolean
   icon: string;
-  items?: NavigationItemWithIcon[];
+  children?: NavigationItem[];
 }
 
 export interface NavigationSection {
@@ -40,11 +32,10 @@ export const mainSections: NavigationSection[] = [
         name: "Categories",
         href: "/categories",
         expandable: true,
-        items: [
+        children: [
           {
             name: "Animals & Nature",
             href: "/categories/animals-nature",
-            icon: "lucide:cat",
           }
         ],
       },

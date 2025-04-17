@@ -1,0 +1,40 @@
+---
+import { Icon } from 'astro-icon/components';
+import type { NavigationItemWithIcon } from '../data/navigation'
+
+interface Props {
+  item: NavigationItemWithIcon
+}
+
+const { item } = Astro.props;
+---
+
+<div class="sidebar-item">
+  <div
+    class={`flex items-center justify-between rounded-md hover:bg-sidebar-accent/20 transition-colors duration-200 ${item.expandable ? "cursor-pointer" : ""}`}
+    data-expandable={item.expandable}
+  >
+    <a href={item.href} class="flex-1 text-sidebar-foreground/80 hover:text-sidebar-foreground py-2 px-2 truncate transition-colors duration-200 flex items-center">
+      <Icon name={item.icon} class="w-5 h-5 mr-3 inline-block flex-shrink-0 sidebar-icon" />
+      <span class="sidebar-text">{item.name}</span>
+    </a>
+    {item.expandable && (
+      <button class="w-6 h-6 items-center justify-center text-sidebar-foreground/60 hover:text-sidebar-foreground transition-colors duration-200 sidebar-toggle">
+        <span class="transform transition-transform duration-200 rotate-0">+</span>
+      </button>
+    )}
+  </div>
+
+  {item.children && (
+    <div class={`ml-3 pl-3 border-l border-sidebar-border mt-1 space-y-1 transition-all duration-200 hidden sidebar-submenu`}>
+      {item.children.map((subItem) => (
+        <a
+          href={subItem.href}
+          class="block py-2 px-2 text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/20 rounded-md transition-colors duration-200 truncate"
+        >
+          <span class="sidebar-text">{subItem.name}</span>
+        </a>
+      ))}
+    </div>
+  )}
+</div>

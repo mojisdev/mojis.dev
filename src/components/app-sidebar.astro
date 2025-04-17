@@ -16,7 +16,7 @@ import SidebarItem from "./sidebar-item.astro";
       <div class="size-8 bg-sidebar-primary rounded-md flex items-center justify-center text-sidebar-primary-foreground shrink-0">
         <Icon name="lucide:smile" class="size-5" />
       </div>
-      <div class="transition-opacity duration-300 ease-in-out flex flex-col sidebar-title-container">
+      <div class="transition-opacity duration-300 ease-in-out flex flex-col group-[.collapsed]:md:hidden">
         <h2 class="font-semibold text-sidebar-foreground leading-tight">Mojis</h2>
         <a href={repositoryUrl + "/tree/" + sha} target="_blank" class="text-xs text-sidebar-foreground/60 inline-flex items-center -mt-0.5">
           <Icon name="lucide:git-branch" class="w-3 h-3 mr-1" />
@@ -29,7 +29,7 @@ import SidebarItem from "./sidebar-item.astro";
       </button>
     </div>
 
-    <div class="mt-4 relative transition-opacity duration-300 ease-in-out sidebar-search">
+    <div class="mt-4 relative transition-opacity duration-300 ease-in-out group-[.collapsed]:md:hidden">
       <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
         <Icon name="lucide:search" class="w-4 h-4 text-sidebar-foreground/50" />
       </div>
@@ -48,7 +48,7 @@ import SidebarItem from "./sidebar-item.astro";
       {
         mainSections.map((section) => (
           <div class="sidebar-section">
-            <h3 class="text-xs uppercase font-medium text-sidebar-foreground/50 px-2 mb-2 transition-opacity duration-300 ease-in-out sidebar-section-title">{section.title}</h3>
+            <h3 class="text-xs uppercase font-medium text-sidebar-foreground/50 px-2 mb-2 transition-opacity duration-300 ease-in-out group-[.collapsed]:md:hidden">{section.title}</h3>
             <div class="space-y-1">
               {section.items.map((item) => (
                 <SidebarItem item={item} />
@@ -60,7 +60,7 @@ import SidebarItem from "./sidebar-item.astro";
     </div>
 
     <div class="mt-auto pt-6 border-t border-sidebar-border/30 group-[.collapsed]:md:mt-auto group-[.collapsed]:md:pt-2">
-      <h3 class="text-xs uppercase font-medium text-sidebar-foreground/50 px-2 mb-2 transition-opacity duration-300 ease-in-out sidebar-section-title">{resourcesSection.title}</h3>
+      <h3 class="text-xs uppercase font-medium text-sidebar-foreground/50 px-2 mb-2 transition-opacity duration-300 ease-in-out group-[.collapsed]:md:hidden">{resourcesSection.title}</h3>
       <div class="space-y-1">
         {
           resourcesSection.items.map((item) => (
@@ -103,16 +103,6 @@ import SidebarItem from "./sidebar-item.astro";
       width: 4rem;
     }
 
-    /* Hide text and titles */
-    #sidebar.collapsed .sidebar-title-container,
-    #sidebar.collapsed .sidebar-search,
-    #sidebar.collapsed .sidebar-text,
-    #sidebar.collapsed .sidebar-toggle,
-    #sidebar.collapsed .sidebar-submenu,
-    #sidebar.collapsed .sidebar-section-title {
-      @apply opacity-0 invisible absolute;
-    }
-
     /* Remove section spacing */
     #sidebar.collapsed .sidebar-sections {
       @apply space-y-0;
@@ -121,15 +111,6 @@ import SidebarItem from "./sidebar-item.astro";
     /* Remove item spacing */
     #sidebar.collapsed .sidebar-section {
       @apply m-0 p-0;
-    }
-
-    /* Center icons and reduce spacing */
-    #sidebar.collapsed .sidebar-item {
-      @apply py-2;
-    }
-
-    #sidebar.collapsed .sidebar-icon {
-      @apply mx-auto my-0;
     }
 
     #sidebar.collapsed a {

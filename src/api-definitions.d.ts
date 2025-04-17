@@ -30,7 +30,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": Record<string, never>[];
+                        "application/json": components["schemas"]["EmojiVersions"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -78,7 +78,23 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": Record<string, never>;
+                        "application/json": {
+                            /**
+                             * @description Whether the version is a draft
+                             * @example false
+                             */
+                            draft: boolean;
+                            /**
+                             * @description The emoji version
+                             * @example 16.0
+                             */
+                            emoji_version: string | null;
+                            /**
+                             * @description The Unicode version that corresponds to the emoji version
+                             * @example 14.0
+                             */
+                            unicode_version: string | null;
+                        };
                     };
                 };
                 /** @description Internal Server Error */
@@ -123,7 +139,23 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": Record<string, never>;
+                        "application/json": {
+                            /**
+                             * @description Whether the version is a draft
+                             * @example false
+                             */
+                            draft: boolean;
+                            /**
+                             * @description The emoji version
+                             * @example 16.0
+                             */
+                            emoji_version: string | null;
+                            /**
+                             * @description The Unicode version that corresponds to the emoji version
+                             * @example 14.0
+                             */
+                            unicode_version: string | null;
+                        };
                     };
                 };
                 /** @description No draft versions available */
@@ -350,6 +382,23 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        EmojiVersions: {
+            /**
+             * @description Whether the version is a draft
+             * @example false
+             */
+            draft: boolean;
+            /**
+             * @description The emoji version
+             * @example 16.0
+             */
+            emoji_version: string | null;
+            /**
+             * @description The Unicode version that corresponds to the emoji version
+             * @example 14.0
+             */
+            unicode_version: string | null;
+        }[];
         /** @description An error response */
         ApiError: {
             /** @description The path of the request */

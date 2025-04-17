@@ -11,31 +11,62 @@ interface NavigationItem {
   items?: NavigationItem[];
 }
 
-const navigation = [
-  {
-    icon: "lucide:home",
-    name: "Getting Started",
-    href: "/",
-  },
-  {
-    name: "Categories",
-    href: "/categories",
-    expandable: true,
-    items: [
+interface NavigationSection {
+  title: string;
+  items: NavigationItem[];
+}
 
-    ],
+// Main navigation sections
+const mainSections: NavigationSection[] = [
+  {
+    title: "Overview",
+    items: [
+      {
+        icon: "lucide:home",
+        name: "Getting Started",
+        href: "/",
+      },
+      {
+        name: "Categories",
+        href: "/categories",
+        expandable: true,
+        items: [],
+      },
+    ]
   },
   {
-    name: "Lucky?",
-    icon: "lucide:clover",
-    href: API_URL + "/lucky",
-  },
-  {
-    icon: "lucide:package",
-    name: "API Reference",
-    href: API_URL + "/scalar",
-  },
-] satisfies NavigationItem[];
+    title: "Tools",
+    items: [
+      {
+        name: "Lucky?",
+        icon: "lucide:clover",
+        href: API_URL + "/lucky",
+      },
+      {
+        icon: "lucide:package",
+        name: "API Reference",
+        href: API_URL + "/scalar",
+      },
+    ]
+  }
+];
+
+// Resources section (will be positioned at bottom)
+const resourcesSection: NavigationSection = {
+  title: "Resources",
+  items: [
+    {
+      icon: "lucide:book-open",
+      name: "Documentation",
+      href: "#",
+    },
+    {
+      icon: "lucide:github",
+      name: "GitHub",
+      href: repositoryUrl,
+    },
+  ]
+};
 ---
 
 <!-- Sidebar backdrop overlay (mobile only) -->
@@ -75,38 +106,65 @@ const navigation = [
     </div>
   </div>
 
-  <!-- Rest of the sidebar -->
-  <nav class="flex-1 p-4 pt-0 space-y-1 overflow-y-auto scrollbar-thin scrollbar-thumb-sidebar-border scrollbar-track-transparent">
-    {
-      navigation.map((item) => (
-        <div class="py-1">
-          <div
-            class={`flex items-center justify-between rounded-md hover:bg-sidebar-accent/20 transition-colors duration-200 ${item.expandable ? "cursor-pointer" : ""}`}
-            data-expandable={item.expandable}
-          >
-            <a href={item.href} class="flex-1 text-sidebar-foreground/80 hover:text-sidebar-foreground py-2 px-2 truncate transition-colors duration-200 flex items-center">
-              {item.icon && <Icon name={item.icon} class="w-5 h-5 mr-3 inline-block flex-shrink-0" />}
-              <span class="transition-opacity duration-300 ease-in-out sidebar-text">{item.name}</span>
-            </a>
-            {item.expandable && (
-              <button class="w-6 h-6 items-center justify-center text-sidebar-foreground/60 hover:text-sidebar-foreground transition-colors duration-200 sidebar-toggle">
-                <span class={`transform transition-transform duration-200 ${item.expanded ? "rotate-0" : "rotate-0"}`}>{item.expanded ? "−" : "+"}</span>
-              </button>
-            )}
-          </div>
+  <!-- Main navigation sections -->
+  <nav class="flex-1 p-4 pt-0 overflow-y-auto scrollbar-thin scrollbar-thumb-sidebar-border scrollbar-track-transparent flex flex-col">
+    <!-- Main sections container -->
+    <div class="flex-1">
+      {
+        mainSections.map((section, index) => (
+          <div class={`sidebar-section ${index > 0 ? "mt-6" : ""}`}>
+            <h3 class="text-xs uppercase font-medium text-sidebar-foreground/50 px-2 mb-2 transition-opacity duration-300 ease-in-out sidebar-title">{section.title}</h3>
+            <div class="space-y-1">
+              {section.items.map((item) => (
+                <div class="py-1">
+                  <div
+                    class={`flex items-center justify-between rounded-md hover:bg-sidebar-accent/20 transition-colors duration-200 ${item.expandable ? "cursor-pointer" : ""}`}
+                    data-expandable={item.expandable}
+                  >
+                    <a href={item.href} class="flex-1 text-sidebar-foreground/80 hover:text-sidebar-foreground py-2 px-2 truncate transition-colors duration-200 flex items-center">
+                      {item.icon && <Icon name={item.icon} class="w-5 h-5 mr-3 inline-block flex-shrink-0" />}
+                      <span class="transition-opacity duration-300 ease-in-out sidebar-text">{item.name}</span>
+                    </a>
+                    {item.expandable && (
+                      <button class="w-6 h-6 items-center justify-center text-sidebar-foreground/60 hover:text-sidebar-foreground transition-colors duration-200 sidebar-toggle">
+                        <span class={`transform transition-transform duration-200 ${item.expanded ? "rotate-0" : "rotate-0"}`}>{item.expanded ? "−" : "+"}</span>
+                      </button>
+                    )}
+                  </div>
 
-          {item.items && (
-            <div class={`ml-3 pl-3 border-l border-sidebar-border mt-1 space-y-1 transition-all duration-200 ${!item.expanded && "hidden"} sidebar-submenu`}>
-              {item.items.map((subItem) => (
-                <a href={subItem.href} class="block py-2 px-2 text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/20 rounded-md transition-colors duration-200 truncate">
-                  <span class="transition-opacity duration-300 ease-in-out sidebar-text">{subItem.name}</span>
-                </a>
+                  {item.items && (
+                    <div class={`ml-3 pl-3 border-l border-sidebar-border mt-1 space-y-1 transition-all duration-200 ${!item.expanded && "hidden"} sidebar-submenu`}>
+                      {item.items.map((subItem) => (
+                        <a href={subItem.href} class="block py-2 px-2 text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/20 rounded-md transition-colors duration-200 truncate">
+                          <span class="transition-opacity duration-300 ease-in-out sidebar-text">{subItem.name}</span>
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
-          )}
-        </div>
-      ))
-    }
+          </div>
+        ))
+      }
+    </div>
+
+    <!-- Resources section at bottom -->
+    <div class="mt-auto pt-6 border-t border-sidebar-border/30">
+      <h3 class="text-xs uppercase font-medium text-sidebar-foreground/50 px-2 mb-2 transition-opacity duration-300 ease-in-out sidebar-title">{resourcesSection.title}</h3>
+      <div class="space-y-1">
+        {resourcesSection.items.map((item) => (
+          <div class="py-1">
+            <div class="flex items-center justify-between rounded-md hover:bg-sidebar-accent/20 transition-colors duration-200">
+              <a href={item.href} class="flex-1 text-sidebar-foreground/80 hover:text-sidebar-foreground py-2 px-2 truncate transition-colors duration-200 flex items-center">
+                {item.icon && <Icon name={item.icon} class="w-5 h-5 mr-3 inline-block flex-shrink-0" />}
+                <span class="transition-opacity duration-300 ease-in-out sidebar-text">{item.name}</span>
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   </nav>
 </aside>
 
@@ -133,7 +191,8 @@ const navigation = [
     #sidebar.collapsed #sidebar-search,
     #sidebar.collapsed .sidebar-text,
     #sidebar.collapsed .sidebar-toggle,
-    #sidebar.collapsed .sidebar-submenu {
+    #sidebar.collapsed .sidebar-submenu,
+    #sidebar.collapsed .sidebar-title {
       opacity: 0;
       visibility: hidden;
     }
@@ -144,7 +203,8 @@ const navigation = [
   #sidebar #sidebar-search,
   #sidebar .sidebar-text,
   #sidebar .sidebar-toggle,
-  #sidebar .sidebar-submenu {
+  #sidebar .sidebar-submenu,
+  #sidebar .sidebar-title {
     opacity: 1;
     visibility: visible;
   }

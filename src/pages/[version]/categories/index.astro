@@ -1,48 +1,29 @@
 ---
 import PageLayout from "../../../layouts/page-layout.astro";
-import { client } from "../../../lib/client";
+import { queryVersions, queryCategories } from "../../../lib/query-builder";
 
 export async function getStaticPaths() {
-  const { data: versions, error } = await client.GET("/api/v1/versions");
-
-  if (error != null) {
-    throw new Error(`failed to fetch versions: ${error}`);
-  }
-
+  // Get all versions using the query builder
+  const versions = await queryVersions().all();
 
   const paths = [];
 
-	const categoryPromises = versions.map(async (version) => {
-		const { data, error } = await client.GET("/api/v1/categories/{version}", {
-			params: {
-				path: {
-					version: version.emoji_version!,
-				},
-			},
-		});
+  // For each version, get the categories
+  for (const version of versions) {
+    const categories = await queryCategories(version.emoji_version!).all();
 
-		if (error != null) {
-			throw new Error(`failed to fetch emoji groups: ${error}`);
-		}
+    paths.push({
+      params: {
+        version: version.emoji_version,
+      },
+      props: {
+        version: version.emoji_version,
+        categories,
+      },
+    });
+  }
 
-		return [version.emoji_version, data] as const;
-	})
-
-	const categories = await Promise.all(categoryPromises);
-
-	for (const [version, groups] of categories) {
-		paths.push({
-			params: {
-				version,
-			},
-			props: {
-				version,
-				categories: groups,
-			},
-		});
-	}
-
-	return paths;
+  return paths;
 }
 
 const { version, categories } = Astro.props;

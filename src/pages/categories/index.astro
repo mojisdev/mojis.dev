@@ -1,16 +1,23 @@
 ---
 import PageLayout from "../../layouts/page-layout.astro";
 import { API_URL } from "astro:env/client"
+import { client } from "../../lib/client";
+
 // TODO: fetch latest in a different way
 const latest = "16.0";
 
-const res = await fetch(API_URL + "/api/v1/categories/" + latest)
 
-if (!res.ok) {
-  throw new Error(`Failed to fetch emoji groups: ${res.statusText}`);
+const { data: groups, error } = await client.GET("/api/v1/categories/{version}", {
+	params: {
+		path: {
+			version: latest
+		}
+	}
+})
+
+if (error != null) {
+	throw new Error(`failed to fetch emoji groups: ${error}`);
 }
-
-const groups = await res.json();
 ---
 
 <PageLayout>

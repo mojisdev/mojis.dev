@@ -1,75 +1,9 @@
 ---
 import { Icon } from "astro-icon/components";
-import { shortSha, sha, repositoryUrl } from "virtual:build-meta/git";
-import { API_URL } from "astro:env/client";
-
-interface NavigationItem {
-  name: string;
-  icon?: string;
-  href?: string;
-  expandable?: boolean;
-  items?: NavigationItem[];
-}
-
-interface NavigationSection {
-  title: string;
-  items: NavigationItem[];
-}
-
-// Main navigation sections
-const mainSections: NavigationSection[] = [
-  {
-    title: "Overview",
-    items: [
-      {
-        icon: "lucide:home",
-        name: "Getting Started",
-        href: "/",
-      },
-      {
-        name: "Categories",
-        href: "/categories",
-        expandable: true,
-        items: [],
-      },
-    ]
-  },
-  {
-    title: "Tools",
-    items: [
-      {
-        name: "Lucky?",
-        icon: "lucide:clover",
-        href: API_URL + "/lucky",
-      },
-      {
-        icon: "lucide:package",
-        name: "API Reference",
-        href: API_URL + "/scalar",
-      },
-    ]
-  }
-];
-
-// Resources section (will be positioned at bottom)
-const resourcesSection: NavigationSection = {
-  title: "Resources",
-  items: [
-    {
-      icon: "lucide:book-open",
-      name: "Documentation",
-      href: "#",
-    },
-    {
-      icon: "lucide:github",
-      name: "GitHub",
-      href: repositoryUrl,
-    },
-  ]
-};
+import { repositoryUrl, sha, shortSha } from "virtual:build-meta/git";
+import { mainSections, resourcesSection } from "../data/navigation";
 ---
 
-<!-- Sidebar backdrop overlay (mobile only) -->
 <div id="sidebar-backdrop" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden transition-opacity duration-300 opacity-0"></div>
 
 <aside
@@ -81,7 +15,7 @@ const resourcesSection: NavigationSection = {
       <div class="size-8 bg-sidebar-primary rounded-md flex items-center justify-center text-sidebar-primary-foreground shrink-0">
         <Icon name="lucide:smile" class="size-5" />
       </div>
-      <div class="transition-opacity duration-300 ease-in-out flex flex-col" id="sidebar-title">
+      <div class="transition-opacity duration-300 ease-in-out flex flex-col sidebar-title-container">
         <h2 class="font-semibold text-sidebar-foreground leading-tight">Mojis</h2>
         <a href={repositoryUrl + "/tree/" + sha} target="_blank" class="text-xs text-sidebar-foreground/60 inline-flex items-center -mt-0.5">
           <Icon name="lucide:git-branch" class="w-3 h-3 mr-1" />
@@ -94,7 +28,7 @@ const resourcesSection: NavigationSection = {
       </button>
     </div>
 
-    <div class="mt-4 relative transition-opacity duration-300 ease-in-out" id="sidebar-search">
+    <div class="mt-4 relative transition-opacity duration-300 ease-in-out sidebar-search">
       <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
         <Icon name="lucide:search" class="w-4 h-4 text-sidebar-foreground/50" />
       </div>
@@ -109,25 +43,25 @@ const resourcesSection: NavigationSection = {
   <!-- Main navigation sections -->
   <nav class="flex-1 p-4 pt-0 overflow-y-auto scrollbar-thin scrollbar-thumb-sidebar-border scrollbar-track-transparent flex flex-col">
     <!-- Main sections container -->
-    <div class="flex-1">
+    <div class="flex-1 space-y-6 sidebar-sections">
       {
-        mainSections.map((section, index) => (
-          <div class={`sidebar-section ${index > 0 ? "mt-6" : ""}`}>
-            <h3 class="text-xs uppercase font-medium text-sidebar-foreground/50 px-2 mb-2 transition-opacity duration-300 ease-in-out sidebar-title">{section.title}</h3>
+        mainSections.map((section) => (
+          <div class="sidebar-section">
+            <h3 class="text-xs uppercase font-medium text-sidebar-foreground/50 px-2 mb-2 transition-opacity duration-300 ease-in-out sidebar-section-title">{section.title}</h3>
             <div class="space-y-1">
               {section.items.map((item) => (
-                <div class="py-1">
+                <div class="sidebar-item">
                   <div
                     class={`flex items-center justify-between rounded-md hover:bg-sidebar-accent/20 transition-colors duration-200 ${item.expandable ? "cursor-pointer" : ""}`}
                     data-expandable={item.expandable}
                   >
                     <a href={item.href} class="flex-1 text-sidebar-foreground/80 hover:text-sidebar-foreground py-2 px-2 truncate transition-colors duration-200 flex items-center">
-                      {item.icon && <Icon name={item.icon} class="w-5 h-5 mr-3 inline-block flex-shrink-0" />}
-                      <span class="transition-opacity duration-300 ease-in-out sidebar-text">{item.name}</span>
+                      {item.icon ? <Icon name={item.icon} class="w-5 h-5 mr-3 inline-block flex-shrink-0 sidebar-icon" /> : <div class="w-5 h-5 mr-3 flex-shrink-0" />}
+                      <span class="sidebar-text">{item.name}</span>
                     </a>
                     {item.expandable && (
                       <button class="w-6 h-6 items-center justify-center text-sidebar-foreground/60 hover:text-sidebar-foreground transition-colors duration-200 sidebar-toggle">
-                        <span class={`transform transition-transform duration-200 ${item.expanded ? "rotate-0" : "rotate-0"}`}>{item.expanded ? "−" : "+"}</span>
+                        <span class="transform transition-transform duration-200 rotate-0">+</span>
                       </button>
                     )}
                   </div>
@@ -135,8 +69,11 @@ const resourcesSection: NavigationSection = {
                   {item.items && (
                     <div class={`ml-3 pl-3 border-l border-sidebar-border mt-1 space-y-1 transition-all duration-200 ${!item.expanded && "hidden"} sidebar-submenu`}>
                       {item.items.map((subItem) => (
-                        <a href={subItem.href} class="block py-2 px-2 text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/20 rounded-md transition-colors duration-200 truncate">
-                          <span class="transition-opacity duration-300 ease-in-out sidebar-text">{subItem.name}</span>
+                        <a
+                          href={subItem.href}
+                          class="block py-2 px-2 text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/20 rounded-md transition-colors duration-200 truncate"
+                        >
+                          <span class="sidebar-text">{subItem.name}</span>
                         </a>
                       ))}
                     </div>
@@ -150,25 +87,28 @@ const resourcesSection: NavigationSection = {
     </div>
 
     <!-- Resources section at bottom -->
-    <div class="mt-auto pt-6 border-t border-sidebar-border/30">
-      <h3 class="text-xs uppercase font-medium text-sidebar-foreground/50 px-2 mb-2 transition-opacity duration-300 ease-in-out sidebar-title">{resourcesSection.title}</h3>
+    <div class="mt-auto pt-6 border-t border-sidebar-border/30 sidebar-resources">
+      <h3 class="text-xs uppercase font-medium text-sidebar-foreground/50 px-2 mb-2 transition-opacity duration-300 ease-in-out sidebar-section-title">{resourcesSection.title}</h3>
       <div class="space-y-1">
-        {resourcesSection.items.map((item) => (
-          <div class="py-1">
-            <div class="flex items-center justify-between rounded-md hover:bg-sidebar-accent/20 transition-colors duration-200">
-              <a href={item.href} class="flex-1 text-sidebar-foreground/80 hover:text-sidebar-foreground py-2 px-2 truncate transition-colors duration-200 flex items-center">
-                {item.icon && <Icon name={item.icon} class="w-5 h-5 mr-3 inline-block flex-shrink-0" />}
-                <span class="transition-opacity duration-300 ease-in-out sidebar-text">{item.name}</span>
-              </a>
+        {
+          resourcesSection.items.map((item) => (
+            <div class="sidebar-item">
+              <div class="flex items-center justify-between rounded-md hover:bg-sidebar-accent/20 transition-colors duration-200">
+                <a href={item.href} class="flex-1 text-sidebar-foreground/80 hover:text-sidebar-foreground py-2 px-2 truncate transition-colors duration-200 flex items-center">
+                  {item.icon && <Icon name={item.icon} class="w-5 h-5 mr-3 inline-block flex-shrink-0 sidebar-icon" />}
+                  <span class="sidebar-text">{item.name}</span>
+                </a>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        }
       </div>
     </div>
   </nav>
 </aside>
 
 <style>
+  @reference "../styles/globals.css";
   /* Base styles */
   #sidebar {
     will-change: transform, width;
@@ -181,34 +121,6 @@ const resourcesSection: NavigationSection = {
     }
   }
 
-  /* Desktop collapsed state */
-  @media (min-width: 768px) {
-    #sidebar.collapsed {
-      width: 4rem;
-    }
-
-    #sidebar.collapsed #sidebar-title,
-    #sidebar.collapsed #sidebar-search,
-    #sidebar.collapsed .sidebar-text,
-    #sidebar.collapsed .sidebar-toggle,
-    #sidebar.collapsed .sidebar-submenu,
-    #sidebar.collapsed .sidebar-title {
-      opacity: 0;
-      visibility: hidden;
-    }
-  }
-
-  /* Visible sidebar elements */
-  #sidebar #sidebar-title,
-  #sidebar #sidebar-search,
-  #sidebar .sidebar-text,
-  #sidebar .sidebar-toggle,
-  #sidebar .sidebar-submenu,
-  #sidebar .sidebar-title {
-    opacity: 1;
-    visibility: visible;
-  }
-
   /* Mobile open state */
   #sidebar.open {
     transform: translateX(0);
@@ -218,6 +130,56 @@ const resourcesSection: NavigationSection = {
   #sidebar-backdrop.active {
     display: block;
     opacity: 1;
+  }
+
+  /* Desktop collapsed state modifications */
+  @media (min-width: 768px) {
+    #sidebar.collapsed {
+      width: 4rem;
+    }
+
+    /* Hide text and titles */
+    #sidebar.collapsed .sidebar-title-container,
+    #sidebar.collapsed .sidebar-search,
+    #sidebar.collapsed .sidebar-text,
+    #sidebar.collapsed .sidebar-toggle,
+    #sidebar.collapsed .sidebar-submenu,
+    #sidebar.collapsed .sidebar-section-title {
+      @apply opacity-0 invisible absolute;
+    }
+
+    /* Hide items without icons */
+    #sidebar.collapsed .no-icon {
+      @apply hidden;
+    }
+
+    /* Remove section spacing */
+    #sidebar.collapsed .sidebar-sections {
+      @apply space-y-0;
+    }
+
+    /* Remove item spacing */
+    #sidebar.collapsed .sidebar-section {
+      @apply m-0 p-0;
+    }
+
+    /* Center icons and reduce spacing */
+    #sidebar.collapsed .sidebar-item {
+      @apply py-2;
+    }
+
+    #sidebar.collapsed .sidebar-icon {
+      @apply mx-auto my-0;
+    }
+
+    #sidebar.collapsed a {
+      @apply justify-center px-2;
+    }
+
+    /* Resources section still at bottom with minimal spacing */
+    #sidebar.collapsed .sidebar-resources {
+      @apply mt-auto pt-2;
+    }
   }
 </style>
 

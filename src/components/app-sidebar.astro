@@ -9,7 +9,7 @@ import SidebarItem from "./sidebar-item.astro";
 
 <aside
   id="sidebar"
-  class="bg-sidebar text-sidebar-foreground flex h-full flex-col transition-all duration-300 ease-in-out w-64 fixed md:relative z-50 shadow-lg md:shadow-none left-0 top-0 transform md:translate-x-0"
+  class="group bg-sidebar text-sidebar-foreground flex h-full flex-col transition-all duration-300 ease-in-out w-64 fixed md:relative z-50 shadow-lg md:shadow-none left-0 top-0 transform md:translate-x-0"
 >
   <div class="p-2 pb-2">
     <div class="flex items-center gap-2 py-2">
@@ -59,7 +59,7 @@ import SidebarItem from "./sidebar-item.astro";
       }
     </div>
 
-    <div class="mt-auto pt-6 border-t border-sidebar-border/30 sidebar-resources">
+    <div class="mt-auto pt-6 border-t border-sidebar-border/30 group-[.collapsed]:md:mt-auto group-[.collapsed]:md:pt-2">
       <h3 class="text-xs uppercase font-medium text-sidebar-foreground/50 px-2 mb-2 transition-opacity duration-300 ease-in-out sidebar-section-title">{resourcesSection.title}</h3>
       <div class="space-y-1">
         {
@@ -134,11 +134,6 @@ import SidebarItem from "./sidebar-item.astro";
 
     #sidebar.collapsed a {
       @apply justify-center px-2;
-    }
-
-    /* Resources section still at bottom with minimal spacing */
-    #sidebar.collapsed .sidebar-resources {
-      @apply mt-auto pt-2;
     }
   }
 </style>

@@ -23,6 +23,12 @@ type OrderClause = {
   direction: OrderDirection;
 };
 
+// Types for Astro static paths
+export type StaticPathItem<T = any> = {
+  params: Record<string, string>;
+  props?: T;
+};
+
 /**
  * Query builder for collections (versions, categories, etc.)
  */
@@ -289,6 +295,122 @@ export class QueryBuilder<T = any> {
 
     return params;
   }
+
+  /**
+   * Generate static paths for Astro's getStaticPaths function.
+   * @param config Configuration for path generation
+   */
+  async generatePaths<P = any>(config: {
+    // Parameter field to use as the route parameter
+    paramField: string | ((item: T) => Record<string, string>);
+    // Props to include (either field names or a transform function)
+    props?: string[] | ((item: T) => P);
+  }): Promise<StaticPathItem<P>[]> {
+    const results = await this.all();
+
+    return results.map(item => {
+      // Generate params
+      let params: Record<string, string> = {};
+
+      if (typeof config.paramField === 'function') {
+        params = config.paramField(item);
+      } else {
+        // Use the specified field as the param
+        const paramValue = item[config.paramField];
+        params = { [config.paramField]: String(paramValue) };
+      }
+
+      // Generate props
+      let props: any = undefined;
+
+      if (config.props) {
+        if (Array.isArray(config.props)) {
+          // Include only specified fields
+          props = {} as P;
+          for (const field of config.props) {
+            if (field in item) {
+              props[field] = item[field];
+            }
+          }
+        } else if (typeof config.props === 'function') {
+          // Use transform function
+          props = config.props(item);
+        }
+      }
+
+      return {
+        params,
+        props
+      };
+    });
+  }
+
+  /**
+   * Generate Astro static paths by combining multiple collections.
+   * This is useful for nested routes like [version]/[category]
+   * @param nestedQuery Function that returns a query builder for nested items
+   * @param config Configuration for nested paths
+   */
+  async generateNestedPaths<P = any, N = any>(
+    nestedQuery: (parentItem: T) => QueryBuilder<N> | Promise<QueryBuilder<N>>,
+    config: {
+      parentParamField: string | ((item: T) => Record<string, string>);
+      childParamField: string | ((item: N, parent: T) => Record<string, string>);
+      props?: string[] | ((item: N, parent: T) => P);
+    }
+  ): Promise<StaticPathItem<P>[]> {
+    const parentResults = await this.all();
+    const allPaths: StaticPathItem<P>[] = [];
+
+    for (const parent of parentResults) {
+      // Get nested query
+      const childQueryBuilder = await nestedQuery(parent);
+      const childResults = await childQueryBuilder.all();
+
+      // Generate parent params
+      let parentParams: Record<string, string> = {};
+      if (typeof config.parentParamField === 'function') {
+        parentParams = config.parentParamField(parent);
+      } else {
+        parentParams = { [config.parentParamField]: String(parent[config.parentParamField]) };
+      }
+
+      // Generate paths for each child
+      for (const child of childResults) {
+        let childParams: Record<string, string> = {};
+        if (typeof config.childParamField === 'function') {
+          childParams = config.childParamField(child, parent);
+        } else {
+          childParams = { [config.childParamField]: String(child[config.childParamField]) };
+        }
+
+        // Combine params
+        const params = { ...parentParams, ...childParams };
+
+        // Generate props
+        let props: any = undefined;
+        if (config.props) {
+          if (typeof config.props === 'function') {
+            props = config.props(child, parent);
+          } else {
+            props = {} as P;
+            // Include specified properties from parent and child
+            for (const field of config.props) {
+              if (field in child) {
+                props[field] = child[field];
+              } else if (field in parent) {
+                props[field] = parent[field];
+              }
+            }
+          }
+        }
+
+        allPaths.push({ params, props });
+      }
+    }
+
+    return allPaths;
+  }
 }
 
 /**
@@ -310,4 +432,85 @@ export function queryVersions() {
  */
 export function queryCategories(version: string) {
   return queryCollection('categories', '/api/v1/categories/{version}', { version });
+}
+
+/**
+ * Convenience function to generate paths directly from a collection
+ */
+export async function generatePathsForCollection<T = any, P = any>(
+  collectionName: string,
+  config: {
+    path?: string;
+    params?: Record<string, any>;
+    paramField: string | ((item: T) => Record<string, string>);
+    props?: string[] | ((item: T) => P);
+    filter?: (query: QueryBuilder<T>) => QueryBuilder<T>;
+  }
+): Promise<StaticPathItem<P>[]> {
+  let query = queryCollection<T>(collectionName, config.path, config.params);
+
+  if (config.filter) {
+    query = config.filter(query);
+  }
+
+  return query.generatePaths({
+    paramField: config.paramField,
+    props: config.props
+  });
+}
+
+/**
+ * Generate paths for versions and their categories (convenience function)
+ */
+export async function generateVersionCategoryPaths<P = any>(
+  config: {
+    includeCategories?: boolean;
+    versionParamName?: string;
+    categoryParamName?: string;
+    versionFilter?: (query: QueryBuilder<any>) => QueryBuilder<any>;
+    categoryFilter?: (query: QueryBuilder<any>, version: any) => QueryBuilder<any>;
+    props?: string[] | ((category: any, version: any) => P);
+  } = {}
+): Promise<StaticPathItem<P>[]> {
+  const {
+    includeCategories = true,
+    versionParamName = 'version',
+    categoryParamName = 'category',
+    versionFilter,
+    categoryFilter,
+    props
+  } = config;
+
+  let versionsQuery = queryVersions();
+
+  if (versionFilter) {
+    versionsQuery = versionFilter(versionsQuery);
+  }
+
+  if (!includeCategories) {
+    // Only return version paths
+    return versionsQuery.generatePaths({
+      paramField: item => ({ [versionParamName]: item.emoji_version }),
+      props: Array.isArray(props) ? props : item => item as any
+    });
+  }
+
+  // Return version + category paths
+  return versionsQuery.generateNestedPaths(
+    version => {
+      let catQuery = queryCategories(version.emoji_version!);
+      if (categoryFilter) {
+        catQuery = categoryFilter(catQuery, version);
+      }
+      return catQuery;
+    },
+    {
+      parentParamField: item => ({ [versionParamName]: item.emoji_version }),
+      childParamField: (category, _) => ({ [categoryParamName]: category.slug }),
+      props: props || ((category, version) => ({
+        version: version.emoji_version,
+        category
+      } as any))
+    }
+  );
 }

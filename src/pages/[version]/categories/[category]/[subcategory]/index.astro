@@ -1,23 +1,23 @@
 ---
 import PageLayout from "../../../../../layouts/page-layout.astro";
-import { queryCollection, queryCategories } from "../../../../../lib/query-builder";
+import { queryVersions, queryCategories } from "../../../../../lib/query-builder";
 
 export async function getStaticPaths() {
-  // Get all versions
-  const versions = await queryCollection('versions')
-    .select('emoji_version')
-    .where('draft', '=', false) // Filter out draft versions
+  // This demonstrates a more complex path generation case
+  // We need to handle the triple-nested paths: [version]/[category]/[subcategory]
+
+  const versions = await queryVersions()
+    .where('draft', '=', false) // Only non-draft versions
     .all();
 
   const paths = [];
 
-  // For each version, get categories
   for (const version of versions) {
     const categories = await queryCategories(version.emoji_version!)
       .all();
 
-    // For each category, build paths for its subcategories
     for (const category of categories) {
+      // For each subcategory in the category, create a path
       for (const subcategory of category.subgroups) {
         paths.push({
           params: {
@@ -45,8 +45,6 @@ const { version, category, subcategory } = Astro.props;
   <h1>Version: {version}</h1>
   <h2>Category: {category.name}</h2>
   <h3>Subcategory: {subcategory}</h3>
-
-  <p>This demonstrates the advanced query builder usage.</p>
 
   <div class="actions">
     <a href={`/${version}/categories/${category.slug}`}>← Back to Category</a>

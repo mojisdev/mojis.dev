@@ -1,32 +1,24 @@
 ---
 import PageLayout from "../../../layouts/page-layout.astro";
-import { queryVersions, queryCategories } from "../../../lib/query-builder";
+import { generateVersionCategoryPaths } from "../../../lib/query-builder";
 
 export async function getStaticPaths() {
-  // Get all versions using the query builder
-  const versions = await queryVersions().all();
-
-  const paths = [];
-
-  // For each version, get the categories
-  for (const version of versions) {
-    const categories = await queryCategories(version.emoji_version!).all();
-
-    paths.push({
-      params: {
-        version: version.emoji_version,
-      },
-      props: {
-        version: version.emoji_version,
-        categories,
-      },
-    });
-  }
-
-  return paths;
+  // Simple one-liner to generate all version paths with their categories as props
+  return generateVersionCategoryPaths({
+    includeCategories: false, // We only want version paths here
+    props: (_, version) => ({
+      version: version.emoji_version,
+      categories: [] // This will be filled in the component
+    })
+  });
 }
 
-const { version, categories } = Astro.props;
+const { version } = Astro.props;
+
+// Fetch the categories for this version
+// This demonstrates using the query builder in the component itself
+import { queryCategories } from "../../../lib/query-builder";
+const categories = await queryCategories(version).all();
 ---
 
 <PageLayout>

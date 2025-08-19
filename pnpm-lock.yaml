@@ -58,8 +58,8 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
       unplugin-build-meta:
-        specifier: ^0.2.0
-        version: 0.2.0(astro@5.12.8(@types/node@24.2.1)(jiti@2.4.2)(lightningcss@1.29.2)(rollup@4.46.2)(typescript@5.8.3))(esbuild@0.25.8)(rollup@4.46.2)(vite@6.3.5(@types/node@24.2.1)(jiti@2.4.2)(lightningcss@1.29.2))
+        specifier: ^1.0.0
+        version: 1.0.2(astro@5.12.8(@types/node@24.2.1)(jiti@2.4.2)(lightningcss@1.29.2)(rollup@4.46.2)(typescript@5.8.3))(esbuild@0.25.8)(rollup@4.46.2)(vite@6.3.5(@types/node@24.2.1)(jiti@2.4.2)(lightningcss@1.29.2))
 
 packages:
 
@@ -466,6 +466,9 @@ packages:
   '@jridgewell/gen-mapping@0.3.8':
     resolution: {integrity: sha512-imAbBGkb+ebQyxKgzv5Hu2nmROxoDOXHh80evxdoXNOrvAnVx7zimzc1Oo5h9RlfV4vPXaE2iM5pOFbvOCClWA==}
     engines: {node: '>=6.0.0'}
+
+  '@jridgewell/remapping@2.3.5':
+    resolution: {integrity: sha512-LI9u/+laYG4Ds1TDKSJW2YPrIlcVYOwi2fUC6xB43lueCjgxV4lffOCZCtYFiH6TNOX+tQKXx97T4IKHbhyHEQ==}
 
   '@jridgewell/resolve-uri@3.1.2':
     resolution: {integrity: sha512-bRISgCIjP20/tbWSPWMEi54QVPRZExkuD9lJL+UIxUKtwVJA8wW1Trb1jMs1RFXo1CBTNZ/5hpC9QvmKWdopKw==}
@@ -1961,8 +1964,8 @@ packages:
   shiki@3.9.2:
     resolution: {integrity: sha512-t6NKl5e/zGTvw/IyftLcumolgOczhuroqwXngDeMqJ3h3EQiTY/7wmfgPlsmloD8oYfqkEDqxiaH37Pjm1zUhQ==}
 
-  simple-git@3.27.0:
-    resolution: {integrity: sha512-ivHoFS9Yi9GY49ogc6/YAi3Fl9ROnF4VyubNylgCkA+RVqLaKWnDSzXOVzya8csELIaWaYNutsEuAhZrtOjozA==}
+  simple-git@3.28.0:
+    resolution: {integrity: sha512-Rs/vQRwsn1ILH1oBUy8NucJlXmnnLeLCfcvbSehkPzbv3wwoFWIdtfd6Ndo6ZPhlPsCZ60CPI4rxurnwAa+a2w==}
 
   simple-swizzle@0.2.2:
     resolution: {integrity: sha512-JA//kQgZtbuY83m+xT+tXJkmJncGMTFT+C+g2h2R9uxkYIrE2yy9sgmcLhCnw57/WSD+Eh3J97FPEDFnbXnDUg==}
@@ -2127,8 +2130,8 @@ packages:
   unist-util-visit@5.0.0:
     resolution: {integrity: sha512-MR04uvD+07cwl/yhVuVWAtw+3GOR/knlL55Nd/wAdblk27GCVt3lqpTivy/tkJcZoNPzTwS1Y+KMojlLDhoTzg==}
 
-  unplugin-build-meta@0.2.0:
-    resolution: {integrity: sha512-HHyDYSNsS8Ublg8/fpUQDthD4ppZTZMv6T2QvWf5Lz6VjePguoB2rQt/Fpr2T/+sKmPDD0FWYWmjCAdtCUdh/Q==}
+  unplugin-build-meta@1.0.2:
+    resolution: {integrity: sha512-79zMkCUUnIvmKi1PyA9ZTYEsL6VMPrPthpWbgYFLU/hiHtWygS4+YtUyj6o2ZzFuR85ntytVFUnw8ijzrvh5jA==}
     peerDependencies:
       '@nuxt/kit': '>=3'
       '@nuxt/schema': '>=3'
@@ -2159,8 +2162,8 @@ packages:
       webpack:
         optional: true
 
-  unplugin@2.3.2:
-    resolution: {integrity: sha512-3n7YA46rROb3zSj8fFxtxC/PqoyvYQ0llwz9wtUPUutr9ig09C8gGo5CWCwHrUzlqC1LLR43kxp5vEIyH1ac1w==}
+  unplugin@2.3.6:
+    resolution: {integrity: sha512-+/MdXl8bLTXI2lJF22gUBeCFqZruEpL/oM9f8wxCuKh9+Mw9qeul3gTqgbKpMeOFlusCzc0s7x2Kax2xKW+FQg==}
     engines: {node: '>=18.12.0'}
 
   unstorage@1.16.1:
@@ -2780,6 +2783,11 @@ snapshots:
     dependencies:
       '@jridgewell/set-array': 1.2.1
       '@jridgewell/sourcemap-codec': 1.5.4
+      '@jridgewell/trace-mapping': 0.3.25
+
+  '@jridgewell/remapping@2.3.5':
+    dependencies:
+      '@jridgewell/gen-mapping': 0.3.8
       '@jridgewell/trace-mapping': 0.3.25
 
   '@jridgewell/resolve-uri@3.1.2': {}
@@ -4637,7 +4645,7 @@ snapshots:
       '@shikijs/vscode-textmate': 10.0.2
       '@types/hast': 3.0.4
 
-  simple-git@3.27.0:
+  simple-git@3.28.0:
     dependencies:
       '@kwsites/file-exists': 1.1.1
       '@kwsites/promise-deferred': 1.1.1
@@ -4822,11 +4830,11 @@ snapshots:
       unist-util-is: 6.0.0
       unist-util-visit-parents: 6.0.1
 
-  unplugin-build-meta@0.2.0(astro@5.12.8(@types/node@24.2.1)(jiti@2.4.2)(lightningcss@1.29.2)(rollup@4.46.2)(typescript@5.8.3))(esbuild@0.25.8)(rollup@4.46.2)(vite@6.3.5(@types/node@24.2.1)(jiti@2.4.2)(lightningcss@1.29.2)):
+  unplugin-build-meta@1.0.2(astro@5.12.8(@types/node@24.2.1)(jiti@2.4.2)(lightningcss@1.29.2)(rollup@4.46.2)(typescript@5.8.3))(esbuild@0.25.8)(rollup@4.46.2)(vite@6.3.5(@types/node@24.2.1)(jiti@2.4.2)(lightningcss@1.29.2)):
     dependencies:
       git-url-parse: 16.1.0
-      simple-git: 3.27.0
-      unplugin: 2.3.2
+      simple-git: 3.28.0
+      unplugin: 2.3.6
     optionalDependencies:
       astro: 5.12.8(@types/node@24.2.1)(jiti@2.4.2)(lightningcss@1.29.2)(rollup@4.46.2)(typescript@5.8.3)
       esbuild: 0.25.8
@@ -4835,8 +4843,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  unplugin@2.3.2:
+  unplugin@2.3.6:
     dependencies:
+      '@jridgewell/remapping': 2.3.5
       acorn: 8.15.0
       picomatch: 4.0.3
       webpack-virtual-modules: 0.6.2

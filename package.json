@@ -15,11 +15,11 @@
     "@iconify-json/lucide": "^1.2.37",
     "@iconify-json/ph": "^1.2.2",
     "astro-icon": "^1.1.5",
-    "openapi-fetch": "^0.13.5",
+    "openapi-fetch": "^0.14.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
-  "packageManager": "pnpm@10.8.1",
+  "packageManager": "pnpm@10.14.0",
   "devDependencies": {
     "@astrojs/react": "^4.2.4",
     "@tailwindcss/vite": "^4.1.4",
@@ -30,6 +30,6 @@
     "tailwindcss": "^4.1.4",
     "tw-animate-css": "^1.2.5",
     "typescript": "^5.8.3",
-    "unplugin-build-meta": "^0.2.0"
+    "unplugin-build-meta": "^0.3.0"
   }
 }

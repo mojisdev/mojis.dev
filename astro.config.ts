@@ -5,6 +5,7 @@ import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import buildMeta from "unplugin-build-meta/astro";
 import icon from "astro-icon";
+import cloudflare from "@astrojs/cloudflare";
 
 // https://astro.build/config
 export default defineConfig({
@@ -31,4 +32,13 @@ export default defineConfig({
       tailwindcss()
     ],
   },
+  trailingSlash: "never",
+  adapter: cloudflare({
+    platformProxy: {
+      enabled: true,
+      configPath: "./wrangler.jsonc",
+    },
+    imageService: "cloudflare",
+  }),
+  output: "server",
 });

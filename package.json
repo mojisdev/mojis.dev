@@ -2,6 +2,7 @@
   "name": "mojis.dev",
   "type": "module",
   "private": true,
+  "packageManager": "pnpm@10.15.0",
   "scripts": {
     "dev": "wrangler types && astro dev",
     "start": "wrangler types && astro dev",
@@ -22,7 +23,6 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
-  "packageManager": "pnpm@10.15.0",
   "devDependencies": {
     "@astrojs/cloudflare": "^12.6.4",
     "@astrojs/react": "^4.3.0",

@@ -1,10 +1,10 @@
 ---
-import { client } from '../lib/client';
+import { client } from "../lib/client";
 
 const { data: version, error } = await client.GET("/api/v1/versions/latest");
 
 if (error != null) {
-	throw new Error(`failed to fetch versions: ${error}`);
+  throw new Error(`failed to fetch versions: ${error}`);
 }
 
 return Astro.rewrite(`/${version.emoji_version}`);

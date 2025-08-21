@@ -1,14 +1,13 @@
 import { API_URL } from "astro:env/client";
 import { repositoryUrl } from "virtual:build-meta/git";
 
-
 export interface NavigationItem {
   name: string;
   href: string;
 }
 
 export interface NavigationItemWithIcon extends NavigationItem {
-  expandable?: boolean
+  expandable?: boolean;
   icon: string;
   children?: NavigationItem[];
 }
@@ -36,10 +35,10 @@ export const mainSections: NavigationSection[] = [
           {
             name: "Animals & Nature",
             href: "/categories/animals-nature",
-          }
+          },
         ],
       },
-    ]
+    ],
   },
   {
     title: "Tools",
@@ -47,10 +46,10 @@ export const mainSections: NavigationSection[] = [
       {
         name: "Lucky?",
         icon: "lucide:clover",
-        href: API_URL + "/lucky",
+        href: `${API_URL}/lucky`,
       },
-    ]
-  }
+    ],
+  },
 ];
 
 export const resourcesSection: NavigationSection = {
@@ -64,12 +63,12 @@ export const resourcesSection: NavigationSection = {
     {
       icon: "lucide:package",
       name: "API Reference",
-      href: API_URL + "/scalar",
+      href: `${API_URL}/scalar`,
     },
     {
       icon: "lucide:github",
       name: "GitHub",
       href: repositoryUrl ?? "https://github.com/mojisdev/mojis",
     },
-  ]
+  ],
 };

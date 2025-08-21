@@ -7,6 +7,6 @@ export default luxass({
 }, {
   ignores: [
     "**/vercel.json",
-    "worker-configuration.d.ts"
+    "worker-configuration.d.ts",
   ],
 });

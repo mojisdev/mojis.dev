@@ -9,40 +9,39 @@ export async function getStaticPaths() {
     throw new Error(`failed to fetch versions: ${error}`);
   }
 
-
   const paths = [];
 
-	const categoryPromises = versions.map(async (version) => {
-		const { data, error } = await client.GET("/api/v1/categories/{version}", {
-			params: {
-				path: {
-					version: version.emoji_version!,
-				},
-			},
-		});
+  const categoryPromises = versions.map(async (version) => {
+    const { data, error } = await client.GET("/api/v1/categories/{version}", {
+      params: {
+        path: {
+          version: version.emoji_version!,
+        },
+      },
+    });
 
-		if (error != null) {
-			throw new Error(`failed to fetch emoji groups: ${error}`);
-		}
+    if (error != null) {
+      throw new Error(`failed to fetch emoji groups: ${error}`);
+    }
 
-		return [version.emoji_version, data] as const;
-	})
+    return [version.emoji_version, data] as const;
+  });
 
-	const categories = await Promise.all(categoryPromises);
+  const categories = await Promise.all(categoryPromises);
 
-	for (const [version, groups] of categories) {
-		paths.push({
-			params: {
-				version,
-			},
-			props: {
-				version,
-				categories: groups,
-			},
-		});
-	}
+  for (const [version, groups] of categories) {
+    paths.push({
+      params: {
+        version,
+      },
+      props: {
+        version,
+        categories: groups,
+      },
+    });
+  }
 
-	return paths;
+  return paths;
 }
 
 const { version, categories } = Astro.props;

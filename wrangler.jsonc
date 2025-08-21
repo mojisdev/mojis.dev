@@ -17,6 +17,9 @@
   "placement": {
     "mode": "smart"
   },
+  "vars": {
+    "API_URL": "https://api.mojis.dev"
+  },
   "routes": [
     {
       "custom_domain": true,

@@ -11,25 +11,25 @@
     "generate:client:local": "openapi-typescript -o ./src/api-definitions.d.ts http://localhost:8787/openapi.json"
   },
   "dependencies": {
-    "@astrojs/sitemap": "^3.3.0",
-    "@iconify-json/lucide": "^1.2.37",
+    "@astrojs/sitemap": "^3.5.0",
+    "@iconify-json/lucide": "^1.2.63",
     "@iconify-json/ph": "^1.2.2",
     "astro-icon": "^1.1.5",
-    "openapi-fetch": "^0.13.5",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "openapi-fetch": "^0.14.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
   },
-  "packageManager": "pnpm@10.8.1",
+  "packageManager": "pnpm@10.15.0",
   "devDependencies": {
-    "@astrojs/react": "^4.2.4",
-    "@tailwindcss/vite": "^4.1.4",
-    "@types/react": "^19.1.2",
-    "@types/react-dom": "^19.1.2",
-    "astro": "^5.7.1",
-    "openapi-typescript": "^7.6.1",
-    "tailwindcss": "^4.1.4",
-    "tw-animate-css": "^1.2.5",
-    "typescript": "^5.8.3",
-    "unplugin-build-meta": "^0.2.0"
+    "@astrojs/react": "^4.3.0",
+    "@tailwindcss/vite": "^4.1.12",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "astro": "^5.13.2",
+    "openapi-typescript": "^7.9.1",
+    "tailwindcss": "^4.1.12",
+    "tw-animate-css": "^1.3.7",
+    "typescript": "^5.9.2",
+    "unplugin-build-meta": "^1.0.2"
   }
 }

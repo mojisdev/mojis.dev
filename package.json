@@ -2,7 +2,7 @@
   "name": "mojis.dev",
   "type": "module",
   "private": true,
-  "packageManager": "pnpm@10.15.0",
+  "packageManager": "pnpm@10.15.1",
   "scripts": {
     "dev": "wrangler types && astro dev",
     "start": "wrangler types && astro dev",
